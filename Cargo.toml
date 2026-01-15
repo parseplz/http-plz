@@ -1,0 +1,12 @@
+[package]
+name = "http-plz"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+bytes = "1.11.0"
+header-plz = "0.0.31"
+# header-plz = { git = "https://github.com/parseplz/primitives.git" }
+body-plz = "0.0.35"
+decompression-plz = "0.0.12"
+thiserror = "2.0.17"
