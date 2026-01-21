@@ -18,10 +18,7 @@ pub struct Message<T> {
     trailers: Option<HeaderMap>,
 }
 
-impl<T> Message<T>
-where
-    T: std::fmt::Debug,
-{
+impl<T> Message<T> {
     pub fn new(
         info_line: T,
         headers: HeaderMap,
@@ -72,15 +69,20 @@ where
         self.trailers.take()
     }
 
+    pub fn into_message_head(mut self) -> (T, HeaderMap) {
+        (self.info_line, self.headers)
+    }
+}
+
+impl<T> Message<T>
+where
+    T: std::fmt::Debug,
+{
     pub fn try_decompress(
         &mut self,
         buf: &mut BytesMut,
     ) -> Result<(), MultiDecompressErrorReason> {
         decompress(self, buf)
-    }
-
-    pub fn into_message_head(mut self) -> (T, HeaderMap) {
-        (self.info_line, self.headers)
     }
 }
 
