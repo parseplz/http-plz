@@ -78,6 +78,10 @@ where
     ) -> Result<(), MultiDecompressErrorReason> {
         decompress(self, buf)
     }
+
+    pub fn into_message_head(mut self) -> (T, HeaderMap) {
+        (self.info_line, self.headers)
+    }
 }
 
 pub(crate) fn process_one_headers_and_body(
