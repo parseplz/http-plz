@@ -2,7 +2,7 @@ use body_plz::variants::Body;
 use bytes::BytesMut;
 use decompression_plz::DecompressTrait;
 use header_plz::{
-    HeaderMap, OneHeader, OneHeaderMap, OneInfoLine, body_headers::BodyHeader,
+    OneHeader, OneInfoLine, body_headers::BodyHeader,
     message_head::header_map::HMap,
 };
 

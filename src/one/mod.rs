@@ -1,22 +1,22 @@
-use body_plz::variants::Body;
+use body_plz::variants::{Body, chunked::ChunkType};
 use bytes::BytesMut;
 use decompression_plz::{MultiDecompressErrorReason, decompress};
 use header_plz::{
-    HeaderMap, OneHeader, OneHeaderMap, OneInfoLine, OneMessageHead,
-    OneRequestLine, OneResponseLine,
+    HeaderMap, OneHeaderMap, OneInfoLine, OneMessageHead, OneRequestLine,
+    OneResponseLine,
     body_headers::{
         BodyHeader, parse::ParseBodyHeaders, transfer_types::TransferType,
     },
     const_headers::{
         CLOSE, CONNECTION, CONTENT_LENGTH, KEEP_ALIVE, PROXY_CONNECTION,
-        TRAILER, WS_EXT,
+        SEC_WEBSOCKET_EXTENSIONS, TRAILER,
     },
     error::HeaderReadError,
 };
 pub mod impl_decompress;
 
-pub mod build;
 pub mod impl_try_from_bytes;
+pub mod parse;
 mod request;
 mod response;
 
@@ -65,11 +65,11 @@ where
         &self.message_head
     }
 
-    pub fn has_header_key(&self, key: &str) -> Option<usize> {
+    pub fn has_header_key(&self, key: &[u8]) -> Option<usize> {
         self.message_head.header_map().header_key_position(key)
     }
 
-    pub fn add_header(&mut self, key: &str, value: &str) {
+    pub fn add_header(&mut self, key: &[u8], value: &[u8]) {
         self.message_head.header_map_as_mut().insert(key, value);
     }
 
@@ -85,8 +85,8 @@ where
 
     pub fn update_header_value_on_key(
         &mut self,
-        key: &str,
-        value: &str,
+        key: &[u8],
+        value: &[u8],
     ) -> bool {
         self.message_head
             .header_map_as_mut()
@@ -97,7 +97,7 @@ where
         self.message_head.header_map_as_mut().remove_header_on_position(pos);
     }
 
-    pub fn remove_header_on_key(&mut self, key: &str) -> bool {
+    pub fn remove_header_on_key(&mut self, key: &[u8]) -> bool {
         self.message_head.header_map_as_mut().remove_header_on_key(key)
     }
 
@@ -135,7 +135,7 @@ where
     pub fn has_connection_keep_alive(&self) -> Option<usize> {
         self.message_head
             .header_map()
-            .header_position((CONNECTION, KEEP_ALIVE))
+            .header_position((CONNECTION, KEEP_ALIVE.as_bytes()))
     }
 
     pub fn has_proxy_connection(&self) -> Option<usize> {
@@ -150,7 +150,7 @@ where
         if let Some(pos) = self.has_proxy_connection() {
             self.remove_header_on_position(pos);
         }
-        self.remove_header_on_key(WS_EXT);
+        self.remove_header_on_key(SEC_WEBSOCKET_EXTENSIONS);
     }
 
     pub fn try_decompress(
@@ -159,10 +159,35 @@ where
     ) -> Result<(), MultiDecompressErrorReason> {
         decompress(self, buf)
     }
+
+    pub fn into_bytes(self) -> BytesMut {
+        let mut header = self.message_head.into_bytes();
+        if let Some(body) = self.body {
+            let body = match body {
+                Body::Raw(body) => body,
+                Body::Chunked(items) => {
+                    partial_chunked_to_raw(items).unwrap_or_default()
+                }
+            };
+            header.unsplit(body);
+        }
+        header
+    }
+}
+
+fn partial_chunked_to_raw(vec_body: Vec<ChunkType>) -> Option<BytesMut> {
+    let mut iter = vec_body.into_iter().map(|c| c.into_bytes());
+    let mut body = iter.next()?;
+
+    for chunk in iter {
+        body.unsplit(chunk);
+    }
+
+    Some(body)
 }
 
 pub(crate) fn process_two_headers_and_body(
-    mut headers: HeaderMap,
+    headers: HeaderMap,
     body: Option<&BytesMut>,
     trailer: Option<HeaderMap>,
 ) -> OneHeaderMap {
@@ -170,14 +195,14 @@ pub(crate) fn process_two_headers_and_body(
 
     // Merge trailers
     if let Some(trailers) = trailer {
-        header_map.extend(OneHeaderMap::from(trailers).into_iter());
+        header_map.extend(OneHeaderMap::from(trailers));
     }
 
     // Add content-length if needed
-    if let Some(body) = body {
-        if !header_map.has_key(CONTENT_LENGTH) {
-            header_map.insert(CONTENT_LENGTH, body.len().to_string().as_str());
-        }
+    if let Some(body) = body
+        && !header_map.has_key(CONTENT_LENGTH)
+    {
+        header_map.insert(CONTENT_LENGTH, body.len().to_string().as_bytes());
     }
 
     header_map

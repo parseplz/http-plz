@@ -85,7 +85,7 @@ pub(crate) fn process_one_headers_and_body(
     body: Option<Body>,
 ) -> (HeaderMap, Option<BytesMut>) {
     let body = match body {
-        Some(Body::Chunked(_)) => panic!(),
+        Some(Body::Chunked(_)) => unreachable!(),
         Some(Body::Raw(b)) => Some(b),
         None => None,
     };

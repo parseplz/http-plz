@@ -7,8 +7,8 @@ use error::*;
 mod request;
 mod response;
 
-pub trait BuildMessage {
-    fn build(buf: BytesMut) -> Result<Self, BuildMessageError>
+pub trait ParseMessage {
+    fn parse(buf: BytesMut) -> Result<Self, BuildMessageError>
     where
         Self: Sized;
 }

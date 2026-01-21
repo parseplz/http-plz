@@ -4,10 +4,9 @@ use decompression_plz::DecompressTrait;
 use header_plz::{
     OneInfoLine, OneMessageHead, abnf::HEADER_DELIMITER,
     body_headers::parse::ParseBodyHeaders, const_headers::CONTENT_LENGTH,
-    message_head::MessageHead,
 };
 
-use crate::one::{OneOne, build::error::BuildMessageError};
+use crate::one::{OneOne, parse::error::BuildMessageError};
 
 /* Description:
  *      Build oneone from BytesMut.
@@ -46,8 +45,9 @@ where
         if !buf.is_empty() {
             let len = buf.len().to_string();
             one.set_body(Body::Raw(buf));
-            if !one.update_header_value_on_key(CONTENT_LENGTH, len.as_str()) {
-                one.add_header(CONTENT_LENGTH, &len);
+            if !one.update_header_value_on_key(CONTENT_LENGTH, len.as_bytes())
+            {
+                one.add_header(CONTENT_LENGTH, len.as_bytes());
             }
         }
         Ok(one)

@@ -17,7 +17,7 @@ impl<T> DecompressTrait for Message<T> {
         None
     }
 
-    fn set_body(&mut self, body: Body) {
+    fn set_body(&mut self, _body: Body) {
         todo!()
     }
 

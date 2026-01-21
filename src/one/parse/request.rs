@@ -11,14 +11,14 @@ use super::*;
  *      Adding "Content-Length: 0" is not mandatory.
  */
 
-impl BuildMessage for OneOne<OneRequestLine> {
-    fn build(buf: BytesMut) -> Result<Self, BuildMessageError> {
+impl ParseMessage for OneOne<OneRequestLine> {
+    fn parse(buf: BytesMut) -> Result<Self, BuildMessageError> {
         let mut req = OneOne::<OneRequestLine>::try_from(buf)?;
         if METHODS_WITH_BODY.contains(&req.method_as_enum()) {
             // If No content length header is present
             if req.has_header_key(CONTENT_LENGTH).is_none() {
                 // Add Content-Length of zero
-                req.add_header(CONTENT_LENGTH, "0");
+                req.add_header(CONTENT_LENGTH, b"0");
             }
         }
         Ok(req)
