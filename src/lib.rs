@@ -6,8 +6,8 @@ pub use crate::message::Message;
 pub use crate::message::request::Request;
 pub use crate::message::response::Response;
 
-pub use crate::message::request::RequestBuilder;
-pub use crate::message::response::ResponseBuilder;
+pub use crate::one::OneRequest;
+pub use crate::one::OneResponse;
 
 const HTTP_0_9: &str = "HTTP/0.9";
 const HTTP_1_0: &str = "HTTP/1.0";
