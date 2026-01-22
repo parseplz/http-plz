@@ -10,7 +10,7 @@ use std::borrow::Cow;
 
 use header_plz::{
     OneRequestLine,
-    methods::{CONNECT, Method},
+    method::{CONNECT, Method},
 };
 
 use super::OneOne;
@@ -57,7 +57,7 @@ impl From<(Request, Version)> for OneRequest {
         let mut header_map =
             process_two_headers_and_body(req.headers, body.as_ref(), trailer);
 
-        let (method, uri) = req.info_line.into_parts();
+        let (method, uri, _) = req.info_line.into_parts();
 
         let info_line =
             build_one_request_line_with_version(method, &uri, version);

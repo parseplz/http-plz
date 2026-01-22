@@ -3,8 +3,8 @@ mod message;
 mod one;
 
 pub use crate::message::Message;
-pub use crate::message::request::{Request, RequestBuilder};
-pub use crate::message::response::{Response, ResponseBuilder};
+pub use crate::message::request::Request;
+pub use crate::message::response::Response;
 
 pub use crate::one::OneRequest;
 pub use crate::one::OneResponse;

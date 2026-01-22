@@ -1,4 +1,4 @@
-use header_plz::{OneRequestLine, methods::METHODS_WITH_BODY};
+use header_plz::{OneRequestLine, method::METHODS_WITH_BODY};
 
 use super::*;
 

@@ -1,7 +1,6 @@
 use bytes::Bytes;
 use header_plz::{
-    RequestLine,
-    methods::Method,
+    Method, RequestLine,
     uri::{Uri, path::PathAndQuery, scheme::Scheme},
 };
 

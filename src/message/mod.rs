@@ -103,7 +103,7 @@ mod tests {
     use crate::message::{request::Request, response::Response};
     use bytes::Bytes;
     use header_plz::{
-        methods::Method,
+        Method,
         uri::{Uri, scheme::Scheme},
     };
 
