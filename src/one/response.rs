@@ -60,7 +60,7 @@ impl From<(Response, Version)> for OneResponse {
 }
 
 impl From<Response> for OneResponse {
-    fn from(mut res: Response) -> Self {
+    fn from(res: Response) -> Self {
         OneResponse::from((res, Version::H11))
     }
 }

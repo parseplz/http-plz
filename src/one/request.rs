@@ -103,7 +103,7 @@ mod tests {
             &uri,
             Version::H11,
         );
-        let input = "GET /foo?a=1&b=2#23 HTTP/1.1\r\n";
+        let input = "GET /foo?a=1&b=2 HTTP/1.1\r\n";
         let verify = OneRequestLine::try_build_infoline(input.into()).unwrap();
         assert_eq!(line, verify);
     }

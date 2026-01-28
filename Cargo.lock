@@ -25,9 +25,9 @@ dependencies = [
 
 [[package]]
 name = "body-plz"
-version = "0.0.40"
+version = "0.0.41"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f327b2e9dead291139c0da4b385900133674811afe918e52d0a72859709c6e0b"
+checksum = "5e0917302e86284de4caf6f952866217bad3f44f1ee6634368fb553ba2dfcad5"
 dependencies = [
  "buffer-plz",
  "bytes",
@@ -101,9 +101,9 @@ dependencies = [
 
 [[package]]
 name = "decompression-plz"
-version = "0.0.17"
+version = "0.0.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7fd2da7a87358e48f1dd0c641f424bf1bfb962160a01d99a967ceed82ff3ba55"
+checksum = "0d732c7600143b7bd7ef7068944e04f031dcb7b625d1178056a02c6f952485e3"
 dependencies = [
  "body-plz",
  "brotli",
@@ -145,13 +145,14 @@ dependencies = [
 
 [[package]]
 name = "header-plz"
-version = "0.0.36"
+version = "0.0.37"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1b768b99523ec759331f56865e4ef5a036b268af3dabac3e37b3148ee60ef77a"
+checksum = "da45d7ed6cd575ea9f2c36971a1cb48693070710983e0f39793a60bd263dd504"
 dependencies = [
  "buffer-plz",
  "bytes",
  "mime-plz",
+ "percent-encoding",
  "thiserror",
  "tracing",
 ]
@@ -227,6 +228,12 @@ name = "once_cell"
 version = "1.21.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "42f5e15c9953c5e4ccceeb2e7382a716482c34515315f7b03532b8b4e8393d2d"
+
+[[package]]
+name = "percent-encoding"
+version = "2.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
 
 [[package]]
 name = "pin-project-lite"

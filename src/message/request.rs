@@ -93,7 +93,7 @@ impl From<OneRequest> for Request {
 mod tests {
     use super::*;
     use bytes::BytesMut;
-    use decompression_plz::DecompressTrait;
+
     use header_plz::{HeaderMap, const_headers::CONTENT_LENGTH};
 
     #[test]
@@ -167,7 +167,7 @@ mod tests {
         verify.take_body();
         let input = "POST / HTTP/1.1\r\n\
                      Content-Length: 0\r\n\r\n";
-        let mut one = OneRequest::try_from(BytesMut::from(input)).unwrap();
+        let one = OneRequest::try_from(BytesMut::from(input)).unwrap();
         assert_eq!(Request::from(one), verify);
     }
 

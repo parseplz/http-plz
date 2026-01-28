@@ -1,7 +1,7 @@
 use bytes::BytesMut;
 use header_plz::HeaderMap;
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct MessageBuilder<T> {
     pub(super) info_line: T,
     pub(super) headers: Option<HeaderMap>,

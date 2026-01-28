@@ -69,7 +69,7 @@ impl<T> Message<T> {
         self.trailers.take()
     }
 
-    pub fn into_message_head(mut self) -> (T, HeaderMap) {
+    pub fn into_message_head(self) -> (T, HeaderMap) {
         (self.info_line, self.headers)
     }
 }

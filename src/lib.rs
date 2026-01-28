@@ -1,4 +1,3 @@
-#![allow(warnings)]
 mod message;
 mod one;
 
@@ -9,13 +8,15 @@ pub use crate::message::response::Response;
 pub use crate::one::OneRequest;
 pub use crate::one::OneResponse;
 
-const HTTP_0_9: &str = "HTTP/0.9";
-const HTTP_1_0: &str = "HTTP/1.0";
-const HTTP_1_1: &str = "HTTP/1.1";
-const HTTP_2: &str = "HTTP/2";
-const HTTP_3: &str = "HTTP/3";
+pub use one::parse::ParseMessage;
 
-enum Version {
+pub const HTTP_0_9: &str = "HTTP/0.9";
+pub const HTTP_1_0: &str = "HTTP/1.0";
+pub const HTTP_1_1: &str = "HTTP/1.1";
+pub const HTTP_2: &str = "HTTP/2";
+pub const HTTP_3: &str = "HTTP/3";
+
+pub enum Version {
     H09,
     H10,
     H11,
