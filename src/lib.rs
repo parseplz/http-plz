@@ -5,6 +5,7 @@ pub use crate::message::Message;
 pub use crate::message::request::Request;
 pub use crate::message::response::Response;
 
+pub use crate::one::OneOne;
 pub use crate::one::OneRequest;
 pub use crate::one::OneResponse;
 
