@@ -1,0 +1,4 @@
+**/target/
+**/session.vim
+**/tags
+**/.vscode/
