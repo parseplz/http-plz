@@ -1,0 +1,26 @@
+name: Publish
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
+
+jobs:
+  tests:
+    uses: ./.github/workflows/check.yml
+
+  publish:
+    if: github.repository == 'parseplz/http-plz'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: actions-rust-lang/setup-rust-toolchain@9399c7bb15d4c7d47b27263d024f0a4978346ba4
+        with:
+          cache: false
+
+      - name: Publish crates
+        run: cargo publish --token ${{ secrets.CRATES_TOKEN }}
