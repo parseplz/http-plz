@@ -62,12 +62,16 @@ where
         &self.message_head
     }
 
+    pub fn message_head_mut(&mut self) -> &mut OneMessageHead<T> {
+        &mut self.message_head
+    }
+
     pub fn has_header_key(&self, key: &[u8]) -> Option<usize> {
         self.message_head.header_map().header_key_position(key)
     }
 
     pub fn insert_header(&mut self, key: &[u8], value: &[u8]) {
-        self.message_head.header_map_as_mut().insert(key, value);
+        self.message_head.header_map_mut().insert(key, value);
     }
 
     pub fn update_header_value_on_position(
@@ -76,7 +80,7 @@ where
         value: &str,
     ) {
         self.message_head
-            .header_map_as_mut()
+            .header_map_mut()
             .update_header_value_on_position(pos, value);
     }
 
@@ -86,16 +90,16 @@ where
         value: &[u8],
     ) -> bool {
         self.message_head
-            .header_map_as_mut()
+            .header_map_mut()
             .update_header_value_on_key(key, value)
     }
 
     pub fn remove_header_on_position(&mut self, pos: usize) {
-        self.message_head.header_map_as_mut().remove_header_on_position(pos);
+        self.message_head.header_map_mut().remove_header_on_position(pos);
     }
 
     pub fn remove_header_on_key(&mut self, key: &[u8]) -> bool {
-        self.message_head.header_map_as_mut().remove_header_on_key(key)
+        self.message_head.header_map_mut().remove_header_on_key(key)
     }
 
     pub fn has_trailers(&self) -> bool {

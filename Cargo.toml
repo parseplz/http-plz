@@ -8,10 +8,10 @@ license = "MIT"
 edition = "2024"
 
 [dependencies]
-body-plz = "0.0.44"
+body-plz = "0.0.45"
 bytes = "1.11.0"
-decompression-plz = "0.0.22"
-header-plz = "0.0.40"
+decompression-plz = "0.0.23"
+header-plz = "0.0.41"
 thiserror = "2.0.17"
 
 [lints.clippy]

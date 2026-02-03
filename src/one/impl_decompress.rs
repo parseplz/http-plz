@@ -39,6 +39,6 @@ where
     }
 
     fn header_map_as_mut(&mut self) -> &mut HMap<Self::HmapType> {
-        self.message_head.header_map_as_mut()
+        self.message_head.header_map_mut()
     }
 }

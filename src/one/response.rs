@@ -38,7 +38,11 @@ impl OneResponse {
     }
 
     pub fn status_code(&self) -> Result<StatusCode, InvalidStatusCode> {
-        self.message_head.infoline().status()
+        self.message_head.info_line().status()
+    }
+
+    pub fn set_status(&mut self, status: u16) {
+        self.message_head.info_line_mut().set_status(status);
     }
 }
 

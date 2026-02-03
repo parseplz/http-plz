@@ -52,20 +52,33 @@ impl OneRequest {
     pub fn builder() -> OneRequestBuilder {
         OneRequestBuilder::default()
     }
+
     pub fn is_connect_request(&self) -> bool {
         matches!(self.method_enum(), Method::CONNECT)
     }
 
+    pub fn method_bytes(&self) -> &[u8] {
+        self.message_head.info_line().method_bytes()
+    }
+
     pub fn method_enum(&self) -> Method {
-        self.message_head.infoline().method_enum()
+        self.message_head.info_line().method_enum()
     }
 
     pub fn uri_as_string(&self) -> Cow<'_, str> {
-        self.message_head.infoline().uri_as_string()
+        self.message_head.info_line().uri_as_string()
     }
 
     pub fn uri(&self) -> Result<Uri, InvalidUri> {
-        self.message_head.infoline().uri()
+        self.message_head.info_line().uri()
+    }
+
+    pub fn set_method(&mut self, method: Method) {
+        self.message_head.info_line_mut().set_method(method)
+    }
+
+    pub fn set_uri(&mut self, uri: &[u8]) {
+        self.message_head.info_line_mut().set_uri(uri)
     }
 }
 
