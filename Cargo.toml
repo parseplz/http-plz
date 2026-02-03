@@ -1,6 +1,10 @@
 [package]
 name = "http-plz"
-version = "0.1.0"
+version = "0.0.1"
+authors = ["darkseid", "sytten <emile@caido.io>"]
+description = "HTTP structs used by the ParsePlz organisation"
+repository = "https://github.com/parseplz/http-plz"
+license = "MIT"
 edition = "2024"
 
 [dependencies]
