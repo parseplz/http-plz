@@ -10,7 +10,7 @@ use header_plz::{
         CLOSE, CONNECTION, CONTENT_LENGTH, KEEP_ALIVE, PROXY_CONNECTION,
         SEC_WEBSOCKET_EXTENSIONS, TRAILER,
     },
-    error::HeaderReadError,
+    error::MessageHeadError,
 };
 pub mod impl_decompress;
 
@@ -51,7 +51,7 @@ where
     // parse from message_head
     pub fn try_from_message_head_buf(
         buf: BytesMut,
-    ) -> Result<Self, HeaderReadError> {
+    ) -> Result<Self, MessageHeadError> {
         let message_head = OneMessageHead::<T>::try_from(buf)?;
         let body_headers = message_head.parse_body_headers();
         Ok(OneOne::<T>::new(message_head, body_headers))

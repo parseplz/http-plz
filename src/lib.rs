@@ -1,4 +1,3 @@
-//#![allow(warnings, dead_code)]
 mod message;
 mod one;
 
