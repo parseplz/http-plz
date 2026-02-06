@@ -9,10 +9,10 @@ edition = "2024"
 
 [dependencies]
 body-plz = "0.0.47"
-bytes = "1.11.0"
+bytes = "1.11.1"
 decompression-plz = "0.0.24"
 header-plz = "0.0.43"
-thiserror = "2.0.17"
+thiserror = "2.0.18"
 
 [lints.clippy]
 unwrap_used = "deny"
