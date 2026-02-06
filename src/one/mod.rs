@@ -1,5 +1,5 @@
 use body_plz::variants::{Body, chunked::ChunkType};
-use bytes::BytesMut;
+use bytes::{Buf, BytesMut};
 use decompression_plz::{MultiDecompressErrorReason, decompress};
 use header_plz::{
     HeaderMap, OneHeaderMap, OneInfoLine, OneMessageHead,
@@ -182,16 +182,22 @@ where
         }
         header
     }
+
+    pub fn as_chain(&self) -> impl Buf {
+        let body = match self.body.as_ref() {
+            Some(Body::Raw(b)) => b.as_ref(),
+            _ => &[],
+        };
+        self.message_head.as_chain().chain(body)
+    }
 }
 
 fn partial_chunked_to_raw(vec_body: Vec<ChunkType>) -> Option<BytesMut> {
     let mut iter = vec_body.into_iter().map(|c| c.into_bytes());
     let mut body = iter.next()?;
-
     for chunk in iter {
         body.unsplit(chunk);
     }
-
     Some(body)
 }
 
@@ -220,7 +226,12 @@ pub(crate) fn process_two_headers_and_body(
 #[cfg(test)]
 mod tests {
 
-    use crate::OneRequest;
+    use header_plz::Method;
+
+    use crate::{
+        OneRequest,
+        one::{request::OneRequestBuilder, response::OneResponseBuilder},
+    };
 
     use super::*;
     #[test]
@@ -240,5 +251,99 @@ mod tests {
                         content-length: 9\r\n\r\n\
                         dead body";
         assert_eq!(one.into_bytes(), expected);
+    }
+
+    fn build_header_map() -> OneHeaderMap {
+        let mut headers = OneHeaderMap::new();
+        headers.insert("key1", "value1");
+        headers.insert("key2", "value2");
+        headers.insert("key3", "value3");
+        headers.insert("key4", "value4");
+        headers.insert("key5", "value5");
+        headers
+    }
+
+    #[test]
+    fn test_one_req_as_chain_no_body() {
+        let req = OneRequestBuilder::default()
+            .method(Method::GET)
+            .uri("/foo")
+            .headers(build_header_map())
+            .build();
+        let mut chain = req.as_chain();
+        let result = chain.copy_to_bytes(chain.remaining());
+        let expected = "GET /foo HTTP/1.1\r\n\
+                        key1: value1\r\n\
+                        key2: value2\r\n\
+                        key3: value3\r\n\
+                        key4: value4\r\n\
+                        key5: value5\r\n\r\n";
+        assert_eq!(result, expected);
+        drop(chain);
+        assert_eq!(req.into_bytes(), expected);
+    }
+
+    #[test]
+    fn test_one_req_as_chain_with_body() {
+        let req = OneRequestBuilder::default()
+            .method(Method::POST)
+            .uri("/foo")
+            .headers(build_header_map())
+            .body("dead body".into())
+            .build();
+        let mut chain = req.as_chain();
+        let result = chain.copy_to_bytes(chain.remaining());
+        let expected = "POST /foo HTTP/1.1\r\n\
+                        key1: value1\r\n\
+                        key2: value2\r\n\
+                        key3: value3\r\n\
+                        key4: value4\r\n\
+                        key5: value5\r\n\r\n\
+                        dead body";
+        assert_eq!(result, expected);
+        drop(chain);
+        assert_eq!(req.into_bytes(), expected);
+    }
+
+    #[test]
+    fn test_one_res_as_chain_no_body() {
+        let res = OneResponseBuilder::default()
+            .status(200)
+            .headers(build_header_map())
+            .build()
+            .unwrap();
+        let mut chain = res.as_chain();
+        let result = chain.copy_to_bytes(chain.remaining());
+        let expected = "HTTP/1.1 200 OK\r\n\
+                        key1: value1\r\n\
+                        key2: value2\r\n\
+                        key3: value3\r\n\
+                        key4: value4\r\n\
+                        key5: value5\r\n\r\n";
+        assert_eq!(result, expected);
+        drop(chain);
+        assert_eq!(res.into_bytes(), expected);
+    }
+
+    #[test]
+    fn test_one_res_as_chain_with_body() {
+        let res = OneResponseBuilder::default()
+            .status(200)
+            .headers(build_header_map())
+            .body("dead body".into())
+            .build()
+            .unwrap();
+        let mut chain = res.as_chain();
+        let result = chain.copy_to_bytes(chain.remaining());
+        let expected = "HTTP/1.1 200 OK\r\n\
+                        key1: value1\r\n\
+                        key2: value2\r\n\
+                        key3: value3\r\n\
+                        key4: value4\r\n\
+                        key5: value5\r\n\r\n\
+                        dead body";
+        assert_eq!(result, expected);
+        drop(chain);
+        assert_eq!(res.into_bytes(), expected);
     }
 }
