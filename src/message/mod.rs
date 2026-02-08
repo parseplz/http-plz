@@ -9,7 +9,7 @@ mod impl_decompress;
 pub(crate) mod request;
 pub(crate) mod response;
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Message<T> {
     pub(crate) info_line: T,
     pub(crate) headers: HeaderMap,

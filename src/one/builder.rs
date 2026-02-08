@@ -2,7 +2,7 @@ use body_plz::variants::Body;
 use bytes::BytesMut;
 use header_plz::OneHeaderMap;
 
-#[derive(Debug, Default)]
+#[derive(Clone, Debug, Default)]
 pub struct OneBuilder<T> {
     pub(super) info_line: T,
     pub(super) headers: Option<OneHeaderMap>,

@@ -20,7 +20,7 @@ pub mod parse;
 pub mod request;
 pub mod response;
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct OneOne<T>
 where
     T: OneInfoLine,
