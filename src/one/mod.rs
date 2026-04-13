@@ -7,16 +7,14 @@ use header_plz::{
         BodyHeader, parse::ParseBodyHeaders, transfer_types::TransferType,
     },
     const_headers::{
-        CLOSE, CONNECTION, CONTENT_LENGTH, KEEP_ALIVE, PROXY_CONNECTION,
-        SEC_WEBSOCKET_EXTENSIONS, TRAILER,
+        CONNECTION, CONTENT_LENGTH, KEEP_ALIVE, PROXY_CONNECTION, TRAILER,
     },
-    error::MessageHeadError,
+    message_head::error::MessageHeadError,
 };
 pub mod impl_decompress;
 
 pub mod builder;
 pub mod impl_try_from_bytes;
-pub mod parse;
 pub mod request;
 pub mod response;
 
@@ -64,6 +62,10 @@ where
 
     pub fn message_head_mut(&mut self) -> &mut OneMessageHead<T> {
         &mut self.message_head
+    }
+
+    pub fn header_map_mut(&mut self) -> &mut OneHeaderMap {
+        self.message_head.header_map_mut()
     }
 
     pub fn has_header_key(&self, key: &[u8]) -> Option<usize> {
@@ -143,25 +145,6 @@ where
         self.message_head.header_map().header_key_position(PROXY_CONNECTION)
     }
 
-    // Normalize
-    pub fn normalize(&mut self) {
-        if let Some(pos) = self.has_connection_keep_alive() {
-            self.update_header_value_on_position(pos, CLOSE);
-        }
-        if let Some(pos) = self.has_proxy_connection() {
-            self.remove_header_on_position(pos);
-        }
-        if let Some(Body::Raw(body)) = self.body.as_ref()
-            && self.has_header_key(CONTENT_LENGTH).is_none()
-        {
-            self.insert_header(
-                CONTENT_LENGTH,
-                body.len().to_string().as_bytes(),
-            );
-        }
-        self.remove_header_on_key(SEC_WEBSOCKET_EXTENSIONS);
-    }
-
     pub fn try_decompress(
         &mut self,
         buf: &mut BytesMut,
@@ -228,30 +211,11 @@ mod tests {
 
     use header_plz::Method;
 
-    use crate::{
-        OneRequest,
-        one::{request::OneRequestBuilder, response::OneResponseBuilder},
+    use crate::one::{
+        request::OneRequestBuilder, response::OneResponseBuilder,
     };
 
     use super::*;
-    #[test]
-    fn test_normalize() {
-        let req = "POST /path HTTP/1.1\r\n\r\n";
-        let mut one = OneRequest::new(
-            OneMessageHead::try_from(BytesMut::from(req)).unwrap(),
-            None,
-        );
-        one.insert_header(CONNECTION, KEEP_ALIVE.as_bytes());
-        one.insert_header(PROXY_CONNECTION, KEEP_ALIVE.as_bytes());
-        one.insert_header(SEC_WEBSOCKET_EXTENSIONS, KEEP_ALIVE.as_bytes());
-        one.body = Some(Body::Raw("dead body".into()));
-        one.normalize();
-        let expected = "POST /path HTTP/1.1\r\n\
-                        connection: close\r\n\
-                        content-length: 9\r\n\r\n\
-                        dead body";
-        assert_eq!(one.into_bytes(), expected);
-    }
 
     fn build_header_map() -> OneHeaderMap {
         let mut headers = OneHeaderMap::new();
