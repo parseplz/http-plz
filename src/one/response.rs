@@ -1,4 +1,5 @@
 use decompression_plz::DecompressTrait;
+use header_plz::abnf::CRLF;
 use header_plz::status::InvalidStatusCode;
 use header_plz::{MessageHead, OneResponseLine, StatusCode, Version};
 
@@ -21,7 +22,11 @@ impl OneResponseBuilder {
         let scode = StatusCode::from_u16(self.info_line)?;
         let info_line = OneResponseLine::from(scode);
         let mut response = OneResponse::new(
-            MessageHead::new(info_line, self.headers.unwrap_or_default()),
+            MessageHead::new(
+                info_line,
+                self.headers.unwrap_or_default(),
+                CRLF.into(),
+            ),
             None,
         );
         if let Some(body) = self.body {
@@ -56,7 +61,8 @@ impl From<(Response, Version)> for OneResponse {
         let status = res.info_line.into_parts();
         let info_line = OneResponseLine::from((status, version));
 
-        let message_head = MessageHead::new(info_line, header_map);
+        let message_head =
+            MessageHead::new(info_line, header_map, CRLF.into());
         let mut one = OneResponse::new(message_head, res.body_headers);
 
         if let Some(body) = body

@@ -4,8 +4,11 @@ use std::borrow::Cow;
 use bytes::BufMut;
 use decompression_plz::DecompressTrait;
 use header_plz::{
-    MessageHead, OneRequestLine, Uri, Version, abnf::SP, const_headers::HOST,
-    method::Method, uri::InvalidUri,
+    MessageHead, OneRequestLine, Uri, Version,
+    abnf::{CRLF, SP},
+    const_headers::HOST,
+    method::Method,
+    uri::InvalidUri,
 };
 
 use crate::Request;
@@ -38,7 +41,11 @@ impl OneRequestBuilder {
         let version = BytesMut::from(Version::H11.for_request_line());
         let info_line = OneRequestLine::new(method, uri, version);
         let mut request = OneRequest::new(
-            MessageHead::new(info_line, self.headers.unwrap_or_default()),
+            MessageHead::new(
+                info_line,
+                self.headers.unwrap_or_default(),
+                CRLF.into(),
+            ),
             None,
         );
         if let Some(body) = self.body {
@@ -80,6 +87,10 @@ impl OneRequest {
     pub fn set_uri(&mut self, uri: &[u8]) {
         self.message_head.info_line_mut().set_uri(uri)
     }
+
+    pub fn version(&self) -> Option<Version> {
+        self.message_head.info_line().version()
+    }
 }
 
 impl From<(Request, Version)> for OneRequest {
@@ -100,7 +111,8 @@ impl From<(Request, Version)> for OneRequest {
             header_map.insert(HOST, host);
         }
 
-        let message_head = MessageHead::new(info_line, header_map);
+        let message_head =
+            MessageHead::new(info_line, header_map, CRLF.into());
         let mut one = OneRequest::new(message_head, req.body_headers);
 
         if let Some(body) = body
