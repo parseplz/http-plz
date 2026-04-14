@@ -2,7 +2,7 @@ use body_plz::variants::{Body, chunked::ChunkType};
 use bytes::{Buf, BytesMut};
 use decompression_plz::{MultiDecompressErrorReason, decompress};
 use header_plz::{
-    HeaderMap, OneHeaderMap, OneInfoLine, OneMessageHead,
+    HeaderMap, OneHeaderMap, OneInfoLine, OneMessageHead, Version,
     body_headers::{
         BodyHeader, parse::ParseBodyHeaders, transfer_types::TransferType,
     },
@@ -53,6 +53,11 @@ where
         let message_head = OneMessageHead::<T>::try_from(buf)?;
         let body_headers = message_head.parse_body_headers();
         Ok(OneOne::<T>::new(message_head, body_headers))
+    }
+
+    // version
+    pub fn version(&self) -> Option<Version> {
+        self.message_head.version()
     }
 
     // Header Related methods

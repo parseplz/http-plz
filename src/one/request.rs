@@ -87,10 +87,6 @@ impl OneRequest {
     pub fn set_uri(&mut self, uri: &[u8]) {
         self.message_head.info_line_mut().set_uri(uri)
     }
-
-    pub fn version(&self) -> Option<Version> {
-        self.message_head.info_line().version()
-    }
 }
 
 impl From<(Request, Version)> for OneRequest {
