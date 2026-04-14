@@ -8,10 +8,10 @@ license = "MIT"
 edition = "2024"
 
 [dependencies]
-body-plz = "0.0.50"
+body-plz = "0.0.51"
 bytes = "1.11.1"
-decompression-plz = "0.0.27"
-header-plz = "0.0.46"
+decompression-plz = "0.0.28"
+header-plz = "0.0.47"
 thiserror = "2.0.18"
 bon = "3.9.1"
 
