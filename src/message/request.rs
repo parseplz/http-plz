@@ -1,5 +1,6 @@
 use bytes::Bytes;
 use header_plz::Version;
+use header_plz::bytes_str::BytesStr;
 use header_plz::uri::InvalidUri;
 use header_plz::{
     Method, RequestLine,
@@ -56,6 +57,14 @@ impl Request {
         self.info_line.uri().scheme()
     }
 
+    pub fn try_set_scheme<T>(&mut self, scheme: T) -> Result<(), InvalidUri>
+    where
+        T: TryInto<Scheme>,
+        <T as TryInto<Scheme>>::Error: Into<InvalidUri>,
+    {
+        self.info_line.try_set_scheme(scheme)
+    }
+
     pub fn path_and_query(&self) -> &PathAndQuery {
         self.info_line.uri().path_and_query()
     }
@@ -66,6 +75,16 @@ impl Request {
 
     pub fn query(&self) -> Option<&str> {
         self.info_line.uri().query()
+    }
+
+    pub fn try_set_authority<T>(
+        &mut self,
+        authority: T,
+    ) -> Result<(), InvalidUri>
+    where
+        T: TryInto<BytesStr>,
+    {
+        self.info_line.try_set_authority(authority)
     }
 
     pub fn authority(&self) -> Option<&str> {
