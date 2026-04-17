@@ -1,6 +1,6 @@
 [package]
 name = "http-plz"
-version = "0.0.8"
+version = "0.0.9"
 authors = ["darkseid", "sytten <emile@caido.io>"]
 description = "HTTP structs used by the ParsePlz organisation"
 repository = "https://github.com/parseplz/http-plz"
@@ -8,10 +8,10 @@ license = "MIT"
 edition = "2024"
 
 [dependencies]
-body-plz = "0.0.52"
+body-plz = "0.0.53"
 bytes = "1.11.1"
-decompression-plz = "0.0.29"
-header-plz = "0.0.47"
+decompression-plz = "0.0.30"
+header-plz = "0.0.48"
 thiserror = "2.0.18"
 bon = "3.9.1"
 
