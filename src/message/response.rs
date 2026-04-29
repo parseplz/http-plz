@@ -1,4 +1,8 @@
 use header_plz::Version;
+use header_plz::body_headers::BodyHeader;
+use header_plz::body_headers::parse::{
+    ParseBodyHeaders, parse_body_headers_response,
+};
 use header_plz::status::InvalidStatusCode;
 use header_plz::{ResponseLine, status::StatusCode};
 
@@ -56,6 +60,12 @@ impl TryFrom<OneResponse> for Response {
         let status = StatusCode::from_bytes(raw_status.as_ref())?;
         let info_line = ResponseLine::new(status);
         Ok(Response::new(info_line, headers, body, None))
+    }
+}
+
+impl ParseBodyHeaders for Message<ResponseLine> {
+    fn parse_body_headers(&self) -> Option<BodyHeader> {
+        parse_body_headers_response(&self.info_line, &self.headers)
     }
 }
 

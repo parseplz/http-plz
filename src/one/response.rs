@@ -42,7 +42,7 @@ impl OneResponse {
         OneResponseBuilder::default()
     }
 
-    pub fn status_code(&self) -> Result<StatusCode, InvalidStatusCode> {
+    pub fn status(&self) -> Result<StatusCode, InvalidStatusCode> {
         self.message_head.info_line().status()
     }
 

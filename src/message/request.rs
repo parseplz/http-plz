@@ -1,5 +1,9 @@
 use bytes::Bytes;
 use header_plz::Version;
+use header_plz::body_headers::BodyHeader;
+use header_plz::body_headers::parse::{
+    ParseBodyHeaders, parse_body_headers_request,
+};
 use header_plz::bytes_str::BytesStr;
 use header_plz::uri::InvalidUri;
 use header_plz::{
@@ -108,6 +112,12 @@ impl TryFrom<OneRequest> for Request {
         let uri = Uri::from_shared(raw_path.freeze())?;
         let info_line = RequestLine::new(method, uri);
         Ok(Request::new(info_line, headers, body, None))
+    }
+}
+
+impl ParseBodyHeaders for Message<RequestLine> {
+    fn parse_body_headers(&self) -> Option<BodyHeader> {
+        parse_body_headers_request(&self.info_line, &self.headers)
     }
 }
 

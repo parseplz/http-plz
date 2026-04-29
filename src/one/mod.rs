@@ -69,6 +69,10 @@ where
         &mut self.message_head
     }
 
+    pub fn header_map(&self) -> &OneHeaderMap {
+        self.message_head.header_map()
+    }
+
     pub fn header_map_mut(&mut self) -> &mut OneHeaderMap {
         self.message_head.header_map_mut()
     }
@@ -119,6 +123,10 @@ where
     }
 
     // Body Headers Related
+    pub fn parse_body_headers(&mut self) {
+        self.body_headers = self.message_head.parse_body_headers();
+    }
+
     pub fn body(&self) -> &Option<Body> {
         &self.body
     }
