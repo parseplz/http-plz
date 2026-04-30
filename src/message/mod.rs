@@ -47,6 +47,10 @@ impl<T> Message<T> {
         self.trailers = Some(trailer);
     }
 
+    pub fn set_body_headers(&mut self, body_headers: Option<BodyHeader>) {
+        self.body_headers = body_headers;
+    }
+
     // getters
     pub fn headers(&self) -> &HeaderMap {
         &self.headers
